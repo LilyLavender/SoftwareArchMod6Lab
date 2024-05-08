@@ -1,36 +1,33 @@
 package discount;
 
 public class CustomerOrder {
-
     private String customerName;
     private double billAmount;
-    private char discountType;
+    private DiscountStrategy discountStrategy;
 
     public CustomerOrder(String customerName, double billAmount, char discountType) {
         this.customerName = customerName;
         this.billAmount = billAmount;
-        this.discountType = discountType;
-    }
-
-    public double getBillAmount() {
-        double tempBill;
         switch (discountType) {
             case 'S':
             case 's':
-                tempBill = billAmount - (billAmount * 0.1);
+                this.discountStrategy = new SaleDiscount();
                 break;
             case 'D':
             case 'd':
-                tempBill = billAmount - (billAmount * 0.5);
+                this.discountStrategy = new DiscountDiscount();
                 break;
             case 'L':
             case 'l':
-                tempBill = billAmount - (billAmount * 0.75);
+                this.discountStrategy = new LiquidationDiscount();
                 break;
             default:
-                tempBill = billAmount;
+                this.discountStrategy = null;
         }
-        return tempBill;
+    }
+
+    public double getBillAmount() {
+        return billAmount - discountStrategy.applyDiscount(billAmount);
     }
 
     public void setBillAmount(double billAmount) {
@@ -50,7 +47,6 @@ public class CustomerOrder {
         return "Customer{"
                 + "customerName='" + customerName + '\''
                 + ", billAmount=" + billAmount
-                + ", discountType=" + discountType
                 + '}';
     }
 }
